@@ -5,10 +5,15 @@
 This is a fork of [obra/superpowers](https://github.com/obra/superpowers) that adds
 **moments**: named points in the skills (a spec approved, a plan written, a task started
 or done, work found, a ruling recorded, a branch finished) where another plugin can
-take over for a step. At each one, the skill invokes a handler skill named
+take over for a step. At each one, the agent invokes a handler skill named
 `superpowers-moment-<moment>` if one is installed, and otherwise carries on exactly as
-upstream. The fork ships no handlers. [MOMENTS.md](MOMENTS.md) lists every moment and
-where it sits.
+upstream. The fork ships no handlers.
+
+The planning skills carry their moments as one line of text each. The execution skills,
+`subagent-driven-development` and `executing-plans`, keep upstream's text exactly: their
+moments come from a `PostToolUse` hook, `hooks/ledger-moments`, which reads the progress
+ledger they already keep. [MOMENTS.md](MOMENTS.md) lists every moment and where it
+comes from.
 
 The fork's commits sit on top of upstream's release tags, and are rebased onto each new
 upstream release. Versions read `<upstream version>+moments.<n>`.
