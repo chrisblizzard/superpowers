@@ -35,6 +35,22 @@ while IFS=$'\t' read -r path field; do
     else echo "FAIL version in $path: $v"; failures=$((failures + 1)); fi
 done < <(jq -r '.files[] | [.path, .field] | @tsv' "$root/.version-bump.json")
 
+# The ledger-moments hook is declared after Bash, Write and Edit, in the same shape as
+# upstream's SessionStart entry, and runs through run-hook.cmd.
+hooks="$root/hooks/hooks.json"
+check hook-declared '[.hooks.PostToolUse[]? | select(.matcher == "Bash|Write|Edit") | .hooks[]
+    | select(.command == "\"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" ledger-moments"
+        and .powershell == "& \"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" ledger-moments"
+        and .shell == "bash")] | length == 1' "$hooks"
+check session-start-unchanged ".hooks.SessionStart == $(git -C "$root" show v7.0.2:hooks/hooks.json | jq -c .hooks.SessionStart)" "$hooks"
+ws="$(mktemp -d)"; mkdir -p "$ws/.superpowers/sdd/p"
+printf '%s\n' '# SDD ledger — plan: p.md' 'Task 1: complete (commits a..b, review clean)' > "$ws/.superpowers/sdd/p/progress.md"
+got="$(jq -nc --arg cwd "$ws" '{cwd: $cwd, tool_name: "Edit", tool_input: {}}' | bash "$root/hooks/run-hook.cmd" ledger-moments)"
+rm -rf "$ws"
+if printf '%s' "$got" | jq -e '.hookSpecificOutput.additionalContext | test("Moment: `task-done`")' > /dev/null; then
+    echo "PASS hook-through-wrapper"
+else echo "FAIL hook-through-wrapper: $got"; failures=$((failures + 1)); fi
+
 if out="$(cd "$root" && claude plugin validate . 2>&1)"; then echo "PASS validate"
 else echo "FAIL validate:"; echo "$out" | tail -5 | sed 's/^/    /'; failures=$((failures + 1)); fi
 
