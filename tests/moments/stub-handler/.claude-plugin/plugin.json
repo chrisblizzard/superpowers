@@ -1,0 +1,5 @@
+{
+  "name": "moment-stub",
+  "description": "Test-only handler for the plan-written moment",
+  "version": "0.0.1"
+}
