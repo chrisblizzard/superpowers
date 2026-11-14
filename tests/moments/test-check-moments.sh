@@ -37,5 +37,6 @@ expect follows-missing 1 "FAIL: anchor-missing:" "$fixtures/follows-missing"
 expect indented 0 "" "$fixtures/indented"
 expect require-all 1 "FAIL: no-site:" --require-all "$fixtures/good"
 expect require-all-after-root 1 "FAIL: no-site:" "$fixtures/good" --require-all
+expect hook-sites-require-all 0 "" --require-all "$fixtures/hook-sites"
 
 [ "$failures" -eq 0 ] || { echo "$failures failed"; exit 1; }

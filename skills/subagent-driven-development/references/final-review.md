@@ -30,10 +30,6 @@ plan (top of SKILL.md) stop you here. There is no second fix wave —
 residual load-bearing findings surface to your human partner when
 finishing-a-development-branch presents the options.
 
-For each residual finding you park, use this moment instead of the fix loop's:
-
-**Moment: `work-found`.** If the skill `superpowers-moment-work-found` is available, invoke it now, passing: the finding as a one-line title, the finding and why it was parked as the description, and `Final` in place of a task number. Then continue.
-
 ### Finish
 
 Before you delete anything, collect every ledger line containing `Ruling:` —

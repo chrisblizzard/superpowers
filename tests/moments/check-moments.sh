@@ -33,13 +33,14 @@ fi
 
 is_known() { case " $known " in *" $1 "*) return 0 ;; esac; return 1; }
 
-# Rows of the table: moment<TAB>file<TAB>heading<TAB>follows. Backticks are removed from
-# the moment and file columns only; a heading may contain code.
+# Rows of the table: moment<TAB>file<TAB>heading<TAB>follows. A row is one whose first
+# cell is a backticked name, so MOMENTS.md's other tables are left alone. Backticks are
+# removed from the moment and file columns only; a heading may contain code.
 rows="$(awk -F'|' '
     /^\|/ {
         for (i = 2; i <= 5; i++) gsub(/^[ \t]+|[ \t]+$/, "", $i)
+        if ($2 !~ /^`[a-z][a-z-]*`$/) next
         gsub(/`/, "", $2); gsub(/`/, "", $3)
-        if ($2 == "Moment" || $2 ~ /^-+$/ || $2 == "") next
         print $2 "\t" $3 "\t" $4 "\t" $5
     }' "$moments_file")"
 
@@ -105,6 +106,11 @@ while IFS=$'\t' read -r name file heading follows; do
     [ -n "$name" ] || continue
     is_known "$name" || fail unknown-moment "MOMENTS.md" "row names '$name'"
     has_site[$name]=1
+    # A moment the hook fires has no line in a skill; its row only needs the hook.
+    if [ "$file" = "hooks/ledger-moments" ]; then
+        [ -f "$root/$file" ] || fail anchor-missing "$file" "the hook is gone (row for '$name')"
+        continue
+    fi
     if [ -z "$follows" ]; then
         fail malformed "MOMENTS.md" "row for '$name' in $file has no Follows phrase"
         continue

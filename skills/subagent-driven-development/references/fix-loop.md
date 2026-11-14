@@ -10,16 +10,13 @@ Before the loop starts, two routes leave it immediately:
   (`Task <N>: minor (deferred): <one-liner>`), and point the final
   whole-branch review at that list so it can triage which must be fixed
   before merge. A roll-up nobody reads is a silent discard. Minor findings
-  never enter the loop. For each minor you record as deferred:
-
-  **Moment: `work-found`.** If the skill `superpowers-moment-work-found` is available, invoke it now, passing: the minor's one-liner as the title, the finding as the description, and the task number. Then continue.
+  never enter the loop.
 - A finding labeled plan-mandated — or any finding that conflicts with
   what the plan's text requires — is yours to rule on: weigh the finding
   against the plan text, decide with the spec as the binding authority, and
   ledger the ruling before you act on it. Do not dismiss the finding because
   the plan mandates it, and do not dispatch a fix that contradicts the plan
   without a recorded ruling.
-
 Everything else enters the loop. A fix round is one fix dispatch plus one
 scoped re-review. Five rounds maximum per task:
 
@@ -53,10 +50,6 @@ diff only. New Critical/Important breakage in the fix diff joins the open
 findings list. Out-of-scope observations go to the ledger as deferred
 minors — they never extend the loop.
 
-For each out-of-scope observation you record:
-
-**Moment: `work-found`.** If the skill `superpowers-moment-work-found` is available, invoke it now, passing: the observation as a one-line title, the re-reviewer's words as the description, and the task number. Then continue.
-
 **After each round,** append to the ledger:
 `Task <N>: fix round <R>/5 (<X> addressed, <Y> open — <finding one-liners>; commits <a7>..<b7>)`
 
@@ -78,10 +71,6 @@ the cross-task context the reviewer lacks:
   and carry it into the next task's dispatch. Parking a structural failure
   silently lets every dependent task build on it. Stop only when the defect
   leaves every path forward a guess.
-
-For each finding you park:
-
-**Moment: `work-found`.** If the skill `superpowers-moment-work-found` is available, invoke it now, passing: the finding as a one-line title, the finding and why it was parked as the description, and the task number. Then continue.
 
 Adjudicate only at the cap. Adjudicating earlier to end a loop is
 pre-judging with a different name. Every adjudication is a ledger entry —

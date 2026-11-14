@@ -36,10 +36,6 @@ as `Ruling: <what you decided> — <why> — <what it costs if wrong>`, and keep
 going. Deviating from the plan without a ledgered ruling is a decision made
 in secret.
 
-Each time you write a `Ruling:` line to the ledger, anywhere in this skill:
-
-**Moment: `ruling-recorded`.** If the skill `superpowers-moment-ruling-recorded` is available, invoke it now, passing: the ruling's text, and its task number, `Pre-flight` or `Final`. Then continue.
-
 Four things stop you, and only these: an irreversible or destructive
 operation; a security-sensitive action; a side effect outside this worktree
 that norms say you ask about first (a merge, a push to a shared branch, a
@@ -182,8 +178,6 @@ in the workspace and read its tail; read a brief, not the whole plan.
   signatures, and test cases.
 - Mark the task's todo in_progress.
 
-**Moment: `task-started`.** If the skill `superpowers-moment-task-started` is available, invoke it now, passing: the plan's path, the task number and its title. Then continue.
-
 Every tool call is a turn that re-reads your whole context. Bookkeeping
 rides along with work — a ledger append in the same call as the commit,
 never in a call of its own.
@@ -236,11 +230,8 @@ if they pass — appends the completion line to the ledger:
 
 `Task <N>: complete (commits <base7>..<head7>, tests: <command> → <result>)`
 
-A failing run records nothing; the task is not complete. When it records:
-
-**Moment: `task-done`.** If the skill `superpowers-moment-task-done` is available, invoke it now, passing: the plan's path, the task number, the commit range, and the test command and its result. Then continue.
-
-Then mark the todo complete and take the next task.
+A failing run records nothing; the task is not complete. When it records,
+mark the todo complete and take the next task.
 
 ## Final Review
 
@@ -284,10 +275,6 @@ because the spec was silent has graded the spec, not the effect. Then:
   and to your final message under "Deferred minors". Minors never enter
   the fix pass, and never become rulings — a ruling is a decision about a
   conflict, not a note that you declined a polish suggestion.
-
-For each minor you defer:
-
-**Moment: `work-found`.** If the skill `superpowers-moment-work-found` is available, invoke it now, passing: the minor's one-liner as the title, the finding as the description, and `Final` in place of a task number. Then continue.
 
 Fix the Critical and Important findings yourself — you are the
 implementer here — in ONE pass. Each fix is verified by TDD, not by a
