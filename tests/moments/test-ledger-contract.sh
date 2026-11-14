@@ -24,6 +24,11 @@ Final: 	skills/executing-plans/SKILL.md
 scripts/task-brief PLAN_FILE N	skills/subagent-driven-development/SKILL.md
 scripts/task-start PLAN_FILE N	skills/executing-plans/SKILL.md
 plan-path	skills/subagent-driven-development/scripts/sdd-workspace
+.superpowers/sdd	skills/subagent-driven-development/scripts/sdd-workspace
+progress.md	skills/executing-plans/SKILL.md
+progress.md	skills/subagent-driven-development/SKILL.md
+ — Ruling:	skills/subagent-driven-development/references/fix-loop.md
+### Task N:	skills/writing-plans/SKILL.md
 EOF
 )
 
