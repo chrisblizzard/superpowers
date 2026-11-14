@@ -44,3 +44,9 @@ move a step; each failure is a site to place again by hand.
 | `work-found` | `skills/subagent-driven-development/references/handling-reports.md` | Handling a Report That Isn't DONE | an implementer's observation: title, description, task number |
 | `work-found` | `skills/subagent-driven-development/references/final-review.md` | Final Review and Finish | a residual parked finding: title, description, `Final` |
 | `ruling-recorded` | `skills/subagent-driven-development/references/final-review.md` | Final Review and Finish | the ruling's text, and `Final` |
+| `ruling-recorded` | `skills/executing-plans/SKILL.md` | Executing Plans | the ruling's text, and its task number or `Final` |
+| `task-started` | `skills/executing-plans/SKILL.md` | 1. Take the task | the plan's path, the task number and its title |
+| `ruling-recorded` | `skills/executing-plans/SKILL.md` | 2. Work the steps | the ruling's text, and the task number |
+| `task-done` | `skills/executing-plans/SKILL.md` | 4. Complete the task | the plan's path, the task number, the commit range, the test command and result |
+| `work-found` | `skills/executing-plans/SKILL.md` | Final Review | a deferred minor: title, description, `Final` |
+| `ruling-recorded` | `skills/executing-plans/SKILL.md` | Final Review | the ruling's text, and `Final` |

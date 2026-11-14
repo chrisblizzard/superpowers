@@ -36,6 +36,10 @@ as `Ruling: <what you decided> — <why> — <what it costs if wrong>`, and keep
 going. Deviating from the plan without a ledgered ruling is a decision made
 in secret.
 
+Each time you record a ruling, wherever this skill tells you to:
+
+**Moment: `ruling-recorded`.** If the skill `superpowers-moment-ruling-recorded` is available, invoke it now, passing: the ruling's text, and its task number or `Final`. Then continue.
+
 Four things stop you, and only these: an irreversible or destructive
 operation; a security-sensitive action; a side effect outside this worktree
 that norms say you ask about first (a merge, a push to a shared branch, a
@@ -178,6 +182,8 @@ in the workspace and read its tail; read a brief, not the whole plan.
   signatures, and test cases.
 - Mark the task's todo in_progress.
 
+**Moment: `task-started`.** If the skill `superpowers-moment-task-started` is available, invoke it now, passing: the plan's path, the task number and its title. Then continue.
+
 Every tool call is a turn that re-reads your whole context. Bookkeeping
 rides along with work — a ledger append in the same call as the commit,
 never in a call of its own.
@@ -202,6 +208,8 @@ read its output, and compare. Three outcomes:
   it as `Task <N>: Ruling: <finding> — <what you decided and why>`, and
   continue. The ruling is carried, not remembered: later tasks that touch
   the same interface read it from the ledger.
+
+**Moment: `ruling-recorded`.** If the skill `superpowers-moment-ruling-recorded` is available, invoke it now, passing: the ruling's text, and the task number. Then continue.
 
 Commit as the plan's commit steps say. A task that spans several commits
 is fine; BASE is what the review range is cut from, never `HEAD~1`.
@@ -230,8 +238,11 @@ if they pass — appends the completion line to the ledger:
 
 `Task <N>: complete (commits <base7>..<head7>, tests: <command> → <result>)`
 
-A failing run records nothing; the task is not complete. When it records,
-mark the todo complete and take the next task.
+A failing run records nothing; the task is not complete. When it records:
+
+**Moment: `task-done`.** If the skill `superpowers-moment-task-done` is available, invoke it now, passing: the plan's path, the task number, the commit range, and the test command and its result. Then continue.
+
+Then mark the todo complete and take the next task.
 
 ## Final Review
 
@@ -276,6 +287,10 @@ because the spec was silent has graded the spec, not the effect. Then:
   the fix pass, and never become rulings — a ruling is a decision about a
   conflict, not a note that you declined a polish suggestion.
 
+For each minor you defer:
+
+**Moment: `work-found`.** If the skill `superpowers-moment-work-found` is available, invoke it now, passing: the minor's one-liner as the title, the finding as the description, and `Final` in place of a task number. Then continue.
+
 Fix the Critical and Important findings yourself — you are the
 implementer here — in ONE pass. Each fix is verified by TDD, not by a
 second reviewer: write the test that reproduces the finding, watch it
@@ -289,6 +304,10 @@ re-review: it would re-read a diff whose covering tests already answer
 A finding you decide not to fix is a ruling — `Final: Ruling: <finding> —
 <why the code stands> — <cost if wrong>` — and reaches your human partner
 in the rulings list. There is no second fix pass.
+
+For each `Final:` ruling, on a declined-to-judge line or a finding you don't fix:
+
+**Moment: `ruling-recorded`.** If the skill `superpowers-moment-ruling-recorded` is available, invoke it now, passing: the ruling's text, and `Final`. Then continue.
 
 ## Finish
 
