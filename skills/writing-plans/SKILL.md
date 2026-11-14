@@ -197,6 +197,10 @@ them to review the plan and choose an execution method before implementation.
 
 **"Plan complete and saved to `docs/superpowers/plans/<filename>.md`. Please review the plan. Does it capture what you want?"**
 
+Once your human partner has reviewed the plan and any edits they asked for are made, before execution starts:
+
+**Moment: `plan-written`.** If the skill `superpowers-moment-plan-written` is available, invoke it now, passing: the plan's path, and the spec's path if any. Then continue.
+
 **If Subagent-driven chosen:**
 - **REQUIRED SUB-SKILL:** Use superpowers:subagent-driven-development
 

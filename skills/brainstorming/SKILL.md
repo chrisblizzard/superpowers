@@ -278,6 +278,10 @@ and the gate goes with it. A spike they said yes to may be built; it
 stays labeled throwaway, and keeping what it produced is a new request
 that comes back through this gate.
 
+As soon as your human partner approves the design, whether the doc or, for a small change, the description in chat:
+
+**Moment: `spec-approved`.** If the skill `superpowers-moment-spec-approved` is available, invoke it now, passing: the design doc's path, or `none` when the design was approved in chat. Then continue.
+
 After the design doc is approved, the next step is the plan: invoke
 superpowers:writing-plans and no other skill.
 </HARD-GATE>

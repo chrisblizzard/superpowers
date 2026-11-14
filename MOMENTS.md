@@ -33,3 +33,5 @@ move a step; each failure is a site to place again by hand.
 
 | Moment | File | Under heading | Carries |
 |---|---|---|---|
+| `spec-approved` | `skills/brainstorming/SKILL.md` | The Written Design | the design doc's path, or `none` when approved in chat |
+| `plan-written` | `skills/writing-plans/SKILL.md` | Execution Handoff | the plan's path, and the spec's path if any |
