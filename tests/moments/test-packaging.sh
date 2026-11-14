@@ -24,6 +24,17 @@ check plugin-homepage ".homepage == \"$fork\"" "$pj"
 check plugin-repository ".repository == \"$fork\"" "$pj"
 check plugin-author '.author.name == "Jesse Vincent"' "$pj"
 
+# Every manifest upstream's bump script tracks carries the same version.
+while IFS=$'\t' read -r path field; do
+    f="$root/$path"
+    case "$path" in
+        *.yaml|*.yml) v="$(awk -F': *' -v k="$field" '$1 == k { gsub(/"/, "", $2); print $2; exit }' "$f")" ;;
+        *) v="$(jq -r --arg p "$field" 'getpath($p | split(".") | map(tonumber? // .))' "$f")" ;;
+    esac
+    if [ "$v" = "$version" ]; then echo "PASS version in $path"
+    else echo "FAIL version in $path: $v"; failures=$((failures + 1)); fi
+done < <(jq -r '.files[] | [.path, .field] | @tsv' "$root/.version-bump.json")
+
 if out="$(cd "$root" && claude plugin validate . 2>&1)"; then echo "PASS validate"
 else echo "FAIL validate:"; echo "$out" | tail -5 | sed 's/^/    /'; failures=$((failures + 1)); fi
 
