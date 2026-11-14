@@ -16,8 +16,4 @@ For each observation you note:
 3. If the task is too large, break it into smaller pieces
 4. If the plan itself is wrong, rule on the correction, ledger it, and re-dispatch with the ruling carried in the dispatch
 
-For a ruling on a wrong plan:
-
-**Moment: `ruling-recorded`.** If the skill `superpowers-moment-ruling-recorded` is available, invoke it now, passing: the ruling's text, and the task number. Then continue.
-
 **Never** ignore an escalation or force the same model to retry without changes. If the implementer said it's stuck, something needs to change.

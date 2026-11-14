@@ -20,12 +20,15 @@ row() {
     else echo "FAIL $1 in $2${3:+ under $3}: no row"; failures=$((failures + 1)); fi
 }
 
-row ruling-recorded "$dir/SKILL.md" "Setup"
-row ruling-recorded "$dir/SKILL.md" "2. Work the steps"
-row ruling-recorded "$dir/SKILL.md" "Final Review"
+row ruling-recorded "$dir/SKILL.md" "Executing Plans"
 row task-started "$dir/SKILL.md" "1. Take the task"
 row task-done "$dir/SKILL.md" "4. Complete the task"
 row work-found "$dir/SKILL.md" "Final Review"
+
+# One general site per skill: a specific one beside it would fire twice for one ruling.
+n="$(grep -c '^| `ruling-recorded` | `'"$dir/" "$root/MOMENTS.md")"
+if [ "$n" = "1" ]; then echo "PASS one ruling-recorded site in $dir"
+else echo "FAIL ruling-recorded sites in $dir: $n, want 1"; failures=$((failures + 1)); fi
 
 if bash "$root/tests/moments/check-moments.sh" "$root"; then echo "PASS check-moments"
 else echo "FAIL check-moments"; failures=$((failures + 1)); fi

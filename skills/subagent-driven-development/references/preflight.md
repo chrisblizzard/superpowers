@@ -24,7 +24,3 @@ Rule on each conflict it surfaces — the spec is the binding authority, the
 plan is its argument — record the ruling beside its row, and dispatch
 Task 1. The review loop remains the net for conflicts that only emerge from
 implementation.
-
-For each pre-flight ruling:
-
-**Moment: `ruling-recorded`.** If the skill `superpowers-moment-ruling-recorded` is available, invoke it now, passing: the ruling's text, and `Pre-flight` in place of a task number. Then continue.

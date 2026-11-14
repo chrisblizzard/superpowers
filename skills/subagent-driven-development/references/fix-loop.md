@@ -23,10 +23,6 @@ For each minor you record as deferred:
   the plan mandates it, and do not dispatch a fix that contradicts the plan
   without a recorded ruling.
 
-For each ruling on a plan-mandated finding:
-
-**Moment: `ruling-recorded`.** If the skill `superpowers-moment-ruling-recorded` is available, invoke it now, passing: the ruling's text, and the task number. Then continue.
-
 Everything else enters the loop. A fix round is one fix dispatch plus one
 scoped re-review. Five rounds maximum per task:
 
@@ -85,10 +81,6 @@ the cross-task context the reviewer lacks:
 For each finding you park:
 
 **Moment: `work-found`.** If the skill `superpowers-moment-work-found` is available, invoke it now, passing: the finding as a one-line title, the finding and why it was parked as the description, and the task number. Then continue.
-
-For each park and each load-bearing ruling, record the ruling:
-
-**Moment: `ruling-recorded`.** If the skill `superpowers-moment-ruling-recorded` is available, invoke it now, passing: the ruling's text, and the task number. Then continue.
 
 Adjudicate only at the cap. Adjudicating earlier to end a loop is
 pre-judging with a different name. Every adjudication is a ledger entry —

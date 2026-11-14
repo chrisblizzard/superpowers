@@ -36,6 +36,10 @@ as `Ruling: <what you decided> — <why> — <what it costs if wrong>`, and keep
 going. Deviating from the plan without a ledgered ruling is a decision made
 in secret.
 
+Each time you write a `Ruling:` line to the ledger, anywhere in this skill:
+
+**Moment: `ruling-recorded`.** If the skill `superpowers-moment-ruling-recorded` is available, invoke it now, passing: the ruling's text, and its task number, `Pre-flight` or `Final`. Then continue.
+
 Four things stop you, and only these: an irreversible or destructive
 operation; a security-sensitive action; a side effect outside this worktree
 that norms say you ask about first (a merge, a push to a shared branch, a
@@ -162,10 +166,6 @@ surfaces with the spec as the binding authority, record the ruling beside
 its row, and start Task 1. Each task's own text is checked when you read
 its brief, not here.
 
-For each pre-flight ruling:
-
-**Moment: `ruling-recorded`.** If the skill `superpowers-moment-ruling-recorded` is available, invoke it now, passing: the ruling's text, and `Pre-flight` in place of a task number. Then continue.
-
 ## The Task Loop
 
 Everything you print, and every tool result, stays resident in your
@@ -208,8 +208,6 @@ read its output, and compare. Three outcomes:
   it as `Task <N>: Ruling: <finding> — <what you decided and why>`, and
   continue. The ruling is carried, not remembered: later tasks that touch
   the same interface read it from the ledger.
-
-**Moment: `ruling-recorded`.** If the skill `superpowers-moment-ruling-recorded` is available, invoke it now, passing: the ruling's text, and the task number. Then continue.
 
 Commit as the plan's commit steps say. A task that spans several commits
 is fine; BASE is what the review range is cut from, never `HEAD~1`.
@@ -304,10 +302,6 @@ re-review: it would re-read a diff whose covering tests already answer
 A finding you decide not to fix is a ruling — `Final: Ruling: <finding> —
 <why the code stands> — <cost if wrong>` — and reaches your human partner
 in the rulings list. There is no second fix pass.
-
-For each `Final:` ruling, on a declined-to-judge line or a finding you don't fix:
-
-**Moment: `ruling-recorded`.** If the skill `superpowers-moment-ruling-recorded` is available, invoke it now, passing: the ruling's text, and `Final`. Then continue.
 
 ## Finish
 

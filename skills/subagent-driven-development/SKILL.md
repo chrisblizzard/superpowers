@@ -24,6 +24,10 @@ judgment settles what neither answers. Record every decision in the ledger as
 going. A wrong ruling costs rework your human partner can see and undo; a
 session parked on a question costs their whole day and buys nothing.
 
+Each time you write a `Ruling:` line to the ledger, here or in any reference:
+
+**Moment: `ruling-recorded`.** If the skill `superpowers-moment-ruling-recorded` is available, invoke it now, passing: the ruling's text, and its task number, `Pre-flight` or `Final`. Then continue.
+
 Four things stop you, and only these: an irreversible or destructive
 operation; a security-sensitive action; a side effect outside this worktree
 that norms say you ask about first (a merge, a push to a shared branch, a
