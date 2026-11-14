@@ -17,6 +17,13 @@ description begins "Handles the superpowers `<moment>` moment."
 The moments: `spec-approved`, `plan-written`, `task-started`, `task-done`, `work-found`,
 `ruling-recorded`, `branch-finished`.
 
+## Other changes to upstream's text
+
+Upstream's size check keeps `subagent-driven-development/SKILL.md` under 20,000 bytes.
+To make room for its moments, its "Waiting on dispatched subagents" paragraph moved to
+`references/waiting.md`, leaving a one-line pointer. When a rebase conflicts on that
+paragraph, apply upstream's change to `references/waiting.md`.
+
 ## Keeping the list right
 
 The table below lists every moment line in `skills/`. `Under heading` is the exact text
@@ -35,7 +42,7 @@ move a step; each failure is a site to place again by hand.
 |---|---|---|---|
 | `spec-approved` | `skills/brainstorming/SKILL.md` | The Written Design | the design doc's path, or `none` when approved in chat |
 | `plan-written` | `skills/writing-plans/SKILL.md` | Execution Handoff | the plan's path, and the spec's path if any |
-| `ruling-recorded` | `skills/subagent-driven-development/SKILL.md` | Subagent-Driven Development | the ruling's text, and its task number or `Final` |
+| `ruling-recorded` | `skills/subagent-driven-development/references/preflight.md` | The Pre-flight Scan | the ruling's text, and `Pre-flight` |
 | `task-started` | `skills/subagent-driven-development/SKILL.md` | 1. Dispatch the implementer | the plan's path, the task number and its title |
 | `task-done` | `skills/subagent-driven-development/SKILL.md` | 5. Complete the task | the plan's path, the task number, the commit range, the review result |
 | `work-found` | `skills/subagent-driven-development/references/fix-loop.md` | The Fix Loop | a deferred minor: title, description, task number |
@@ -44,9 +51,12 @@ move a step; each failure is a site to place again by hand.
 | `work-found` | `skills/subagent-driven-development/references/handling-reports.md` | Handling a Report That Isn't DONE | an implementer's observation: title, description, task number |
 | `work-found` | `skills/subagent-driven-development/references/final-review.md` | Final Review and Finish | a residual parked finding: title, description, `Final` |
 | `ruling-recorded` | `skills/subagent-driven-development/references/final-review.md` | Final Review and Finish | the ruling's text, and `Final` |
-| `ruling-recorded` | `skills/executing-plans/SKILL.md` | Executing Plans | the ruling's text, and its task number or `Final` |
+| `ruling-recorded` | `skills/executing-plans/SKILL.md` | Setup | the ruling's text, and `Pre-flight` |
 | `task-started` | `skills/executing-plans/SKILL.md` | 1. Take the task | the plan's path, the task number and its title |
 | `ruling-recorded` | `skills/executing-plans/SKILL.md` | 2. Work the steps | the ruling's text, and the task number |
 | `task-done` | `skills/executing-plans/SKILL.md` | 4. Complete the task | the plan's path, the task number, the commit range, the test command and result |
 | `work-found` | `skills/executing-plans/SKILL.md` | Final Review | a deferred minor: title, description, `Final` |
 | `ruling-recorded` | `skills/executing-plans/SKILL.md` | Final Review | the ruling's text, and `Final` |
+| `branch-finished` | `skills/finishing-a-development-branch/SKILL.md` | Step 3: Determine Base Branch | the path of each plan the branch implemented, and the base branch |
+| `ruling-recorded` | `skills/subagent-driven-development/references/handling-reports.md` | Handling a Report That Isn't DONE | the ruling's text, and the task number |
+| `ruling-recorded` | `skills/subagent-driven-development/references/fix-loop.md` | The Fix Loop | a plan-mandated finding's ruling, and the task number |

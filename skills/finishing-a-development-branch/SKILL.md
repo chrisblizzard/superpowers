@@ -50,6 +50,10 @@ plan, the conversation, or the branch's upstream. If it is not already
 known, ask: "This branch split from <your best guess> - is that correct?"
 Confirm before merging: merging into the wrong base is expensive to undo.
 
+Once the base branch is known, before presenting the options:
+
+**Moment: `branch-finished`.** If the skill `superpowers-moment-branch-finished` is available, invoke it now, passing: the path of each plan this branch implemented, and the base branch. Then continue.
+
 ## Step 4: Present Options
 
 **Normal repo and named-branch worktree — present exactly these 3 options:**

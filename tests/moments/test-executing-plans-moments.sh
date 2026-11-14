@@ -20,7 +20,7 @@ row() {
     else echo "FAIL $1 in $2${3:+ under $3}: no row"; failures=$((failures + 1)); fi
 }
 
-row ruling-recorded "$dir/SKILL.md" "Executing Plans"
+row ruling-recorded "$dir/SKILL.md" "Setup"
 row ruling-recorded "$dir/SKILL.md" "2. Work the steps"
 row ruling-recorded "$dir/SKILL.md" "Final Review"
 row task-started "$dir/SKILL.md" "1. Take the task"
