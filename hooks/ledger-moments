@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+# PostToolUse hook: fires the execution moments from what subagent-driven-development
+# and executing-plans already record. New lines in a plan's ledger
+# (.superpowers/sdd/<plan>/progress.md) fire task-done, work-found and ruling-recorded;
+# a task-start script (task-brief or task-start) fires task-started. The moment
+# sentences go back to the agent as additionalContext. MOMENTS.md lists the formats.
+#
+# A hook must never get in the tool's way: every path exits 0 and stderr is discarded.
+exec 2>/dev/null
+
+input="$(cat)"
+cwd="" tool="" cmd=""
+if command -v jq >/dev/null; then
+    cwd="$(printf '%s' "$input" | jq -r '.cwd // empty')"
+    tool="$(printf '%s' "$input" | jq -r '.tool_name // empty')"
+    cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty')"
+fi
+[ -n "$cwd" ] || cwd="$PWD"
+root="$(git -C "$cwd" rev-parse --show-toplevel)" || root="$cwd"
+sdd="$root/.superpowers/sdd"
+[ -d "$sdd" ] || exit 0
+
+moments=()
+moment() { # NAME CARRIES
+    moments+=("**Moment: \`$1\`.** If the skill \`superpowers-moment-$1\` is available, invoke it now, passing: $2. Then continue.")
+}
+
+# task-started: a task-start script run as `<...>/task-brief PLAN N` or `<...>/task-start PLAN N`.
+start_re='(^|[/[:space:]])(task-brief|task-start)[[:space:]]+["'\'']?([^[:space:]"'\'']+)["'\'']?[[:space:]]+([0-9]+)'
+if [ "$tool" = "Bash" ] && [[ "$cmd" =~ $start_re ]]; then
+    plan="${BASH_REMATCH[3]}" n="${BASH_REMATCH[4]}"
+    file="$plan"; [ "${file#/}" != "$file" ] || file="$cwd/$plan"
+    title="$(sed -n "s/^### Task $n: *//p" "$file" | head -n 1)"
+    moment task-started "the plan's path \`$plan\`, task $n, and its title \"${title:-unknown}\""
+fi
+
+# The ledger moments: every line past each ledger's cursor.
+for ledger in "$sdd"/*/progress.md; do
+    [ -f "$ledger" ] || continue
+    ws="${ledger%/progress.md}"
+    plan="$(head -n 1 "$ws/plan-path")"
+    [ -n "$plan" ] || plan="$(sed -n '1s/^# SDD ledger — plan: //p' "$ledger")"
+    plan="${plan:-unknown}"
+    seen="$(cat "$ws/.moments-cursor")"
+    [[ "$seen" =~ ^[0-9]+$ ]] || seen=0
+    total="$(awk 'END { print NR }' "$ledger")"
+    [ "$total" -ge "$seen" ] || seen=0
+    lineno=0
+    while IFS= read -r line || [ -n "$line" ]; do
+        lineno=$((lineno + 1))
+        [ "$lineno" -gt "$seen" ] || continue
+        case "$line" in
+            Task\ [0-9]*:*) scope="task $(printf '%s' "$line" | sed 's/^Task \([0-9]*\):.*/\1/')" ;;
+            Final:*) scope="Final" ;;
+            Pre-flight*) scope="Pre-flight" ;;
+            *) scope="unknown" ;;
+        esac
+        if [[ "$line" =~ ^Task\ ([0-9]+):\ complete\ \((.*)\)$ ]]; then
+            moment task-done "the plan's path \`$plan\`, task ${BASH_REMATCH[1]}, and ${BASH_REMATCH[2]}"
+        fi
+        if [[ "$line" == *" parked — "* ]]; then
+            finding="${line#* parked — }"; finding="${finding%% — Ruling:*}"
+            moment work-found "\"$finding\" as the title, the ledger line \"$line\" as the description, and $scope"
+        elif [[ "$line" == *"minor (deferred): "* ]]; then
+            moment work-found "\"${line#*minor (deferred): }\" as the title, the ledger line \"$line\" as the description, and $scope"
+        fi
+        if [[ "$line" == *"Ruling:"* ]]; then
+            moment ruling-recorded "the ruling \"$line\", and $scope"
+        fi
+    done < "$ledger"
+    printf '%s\n' "$total" > "$ws/.moments-cursor"
+done
+
+[ "${#moments[@]}" -gt 0 ] || exit 0
+
+# Escape for a JSON string, as hooks/session-start does.
+text="$(printf '%s\n' "${moments[@]}")"
+text="${text//\\/\\\\}"
+text="${text//\"/\\\"}"
+text="${text//$'\n'/\\n}"
+text="${text//$'\r'/\\r}"
+text="${text//$'\t'/\\t}"
+printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"%s"}}\n' "$text"
+exit 0
