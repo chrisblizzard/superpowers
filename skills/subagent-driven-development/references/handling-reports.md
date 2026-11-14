@@ -4,6 +4,10 @@ Part of superpowers:subagent-driven-development.
 
 **DONE_WITH_CONCERNS:** The implementer completed the work but flagged doubts. Read the concerns before proceeding. If the concerns are about correctness or scope, address them before review. If they're observations (e.g., "this file is getting large"), note them and proceed to review.
 
+For each observation you note:
+
+**Moment: `work-found`.** If the skill `superpowers-moment-work-found` is available, invoke it now, passing: the observation as a one-line title, the implementer's words as the description, and the task number. Then continue.
+
 **NEEDS_CONTEXT:** The implementer needs information that wasn't provided. Provide the missing context and re-dispatch.
 
 **BLOCKED:** The implementer cannot complete the task. Assess the blocker:

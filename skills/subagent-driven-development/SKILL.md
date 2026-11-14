@@ -24,6 +24,10 @@ judgment settles what neither answers. Record every decision in the ledger as
 going. A wrong ruling costs rework your human partner can see and undo; a
 session parked on a question costs their whole day and buys nothing.
 
+Each time you record a ruling, wherever this skill or its references tell you to:
+
+**Moment: `ruling-recorded`.** If the skill `superpowers-moment-ruling-recorded` is available, invoke it now, passing: the ruling's text, and its task number or `Final`. Then continue.
+
 Four things stop you, and only these: an irreversible or destructive
 operation; a security-sensitive action; a side effect outside this worktree
 that norms say you ask about first (a merge, a push to a shared branch, a
@@ -200,6 +204,8 @@ child is noticed within minutes, not at the end of the session.
 Record BASE (`git rev-parse HEAD`) before dispatching — the review package
 and fix-round diffs need it.
 
+**Moment: `task-started`.** If the skill `superpowers-moment-task-started` is available, invoke it now, passing: the plan's path, the task number and its title. Then continue.
+
 - **Task brief:** before dispatching an implementer, run this skill's
   `bash scripts/task-brief PLAN_FILE N` by its absolute path, from the
   working tree you're executing in — it extracts the task's full text to a
@@ -313,6 +319,8 @@ message as your other bookkeeping:
 - `Task <N>: complete (commits <base7>..<head7>, review clean)`
 - `Task <N>: complete (commits <base7>..<head7>, <K> parked)` after a
   tripped breaker
+
+**Moment: `task-done`.** If the skill `superpowers-moment-task-done` is available, invoke it now, passing: the plan's path, the task number, the commit range, and the review result. Then continue.
 
 Then mark the todo complete and move on. Never move to the next task while
 the review has open Critical/Important issues that are neither fixed nor

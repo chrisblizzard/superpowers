@@ -11,6 +11,11 @@ Before the loop starts, two routes leave it immediately:
   whole-branch review at that list so it can triage which must be fixed
   before merge. A roll-up nobody reads is a silent discard. Minor findings
   never enter the loop.
+
+For each minor you record as deferred:
+
+**Moment: `work-found`.** If the skill `superpowers-moment-work-found` is available, invoke it now, passing: the minor's one-liner as the title, the finding as the description, and the task number. Then continue.
+
 - A finding labeled plan-mandated — or any finding that conflicts with
   what the plan's text requires — is yours to rule on: weigh the finding
   against the plan text, decide with the spec as the binding authority, and
@@ -71,6 +76,14 @@ the cross-task context the reviewer lacks:
   and carry it into the next task's dispatch. Parking a structural failure
   silently lets every dependent task build on it. Stop only when the defect
   leaves every path forward a guess.
+
+For each finding you park:
+
+**Moment: `work-found`.** If the skill `superpowers-moment-work-found` is available, invoke it now, passing: the finding as a one-line title, the finding and why it was parked as the description, and the task number. Then continue.
+
+For each park and each load-bearing ruling, record the ruling:
+
+**Moment: `ruling-recorded`.** If the skill `superpowers-moment-ruling-recorded` is available, invoke it now, passing: the ruling's text, and the task number. Then continue.
 
 Adjudicate only at the cap. Adjudicating earlier to end a loop is
 pre-judging with a different name. Every adjudication is a ledger entry —

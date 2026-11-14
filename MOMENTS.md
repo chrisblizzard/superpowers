@@ -35,3 +35,12 @@ move a step; each failure is a site to place again by hand.
 |---|---|---|---|
 | `spec-approved` | `skills/brainstorming/SKILL.md` | The Written Design | the design doc's path, or `none` when approved in chat |
 | `plan-written` | `skills/writing-plans/SKILL.md` | Execution Handoff | the plan's path, and the spec's path if any |
+| `ruling-recorded` | `skills/subagent-driven-development/SKILL.md` | Subagent-Driven Development | the ruling's text, and its task number or `Final` |
+| `task-started` | `skills/subagent-driven-development/SKILL.md` | 1. Dispatch the implementer | the plan's path, the task number and its title |
+| `task-done` | `skills/subagent-driven-development/SKILL.md` | 5. Complete the task | the plan's path, the task number, the commit range, the review result |
+| `work-found` | `skills/subagent-driven-development/references/fix-loop.md` | The Fix Loop | a deferred minor: title, description, task number |
+| `work-found` | `skills/subagent-driven-development/references/fix-loop.md` | The Fix Loop | a parked finding: title, description, task number |
+| `ruling-recorded` | `skills/subagent-driven-development/references/fix-loop.md` | The Fix Loop | the ruling's text, and the task number |
+| `work-found` | `skills/subagent-driven-development/references/handling-reports.md` | Handling a Report That Isn't DONE | an implementer's observation: title, description, task number |
+| `work-found` | `skills/subagent-driven-development/references/final-review.md` | Final Review and Finish | a residual parked finding: title, description, `Final` |
+| `ruling-recorded` | `skills/subagent-driven-development/references/final-review.md` | Final Review and Finish | the ruling's text, and `Final` |
