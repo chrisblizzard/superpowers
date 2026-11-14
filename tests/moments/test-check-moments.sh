@@ -33,6 +33,8 @@ expect unlisted 1 "FAIL: unlisted:" "$fixtures/unlisted"
 expect malformed 1 "FAIL: malformed:" "$fixtures/malformed"
 expect unknown-moment 1 "FAIL: unknown-moment:" "$fixtures/unknown-moment"
 expect anchor-missing 1 "FAIL: anchor-missing:" "$fixtures/anchor-missing"
+expect follows-missing 1 "FAIL: anchor-missing:" "$fixtures/follows-missing"
 expect require-all 1 "FAIL: no-site:" --require-all "$fixtures/good"
+expect require-all-after-root 1 "FAIL: no-site:" "$fixtures/good" --require-all
 
 [ "$failures" -eq 0 ] || { echo "$failures failed"; exit 1; }

@@ -2,4 +2,4 @@
 
 ## Handoff
 
-No moment here.
+When the plan is reviewed: nothing here.

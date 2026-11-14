@@ -2,4 +2,6 @@
 
 ## Handoff
 
+When the plan is reviewed:
+
 **Moment: `plan-written`.** If the skill `superpowers-moment-task-done` is available, invoke it now, passing: the plan path. Then continue.
