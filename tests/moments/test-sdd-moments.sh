@@ -27,6 +27,19 @@ row work-found "$dir/references/fix-loop.md"
 row work-found "$dir/references/handling-reports.md"
 row work-found "$dir/references/final-review.md"
 
+# The final review's work-found replaces the fix loop's there, so a park fires once.
+if grep -B3 'Moment: `work-found`' "$root/$dir/references/final-review.md" | grep -q "instead of the fix loop's"; then echo "PASS final-review work-found replaces the fix loop's"
+else echo "FAIL final-review work-found must say it replaces the fix loop's"; failures=$((failures + 1)); fi
+# A re-review's out-of-scope observations become deferred minors: work-found there too.
+if awk -F"|" '$3 ~ /fix-loop.md/ && $2 ~ /work-found/ && $5 ~ /never extend the loop/ { f = 1 } END { exit !f }' "$root/MOMENTS.md"; then echo "PASS work-found for re-review observations"
+else echo "FAIL no work-found row for re-review observations"; failures=$((failures + 1)); fi
+# The two-routes bullet list stays one list: nothing at column 0 inside it.
+if awk '/two routes leave it immediately/ { on = 1; next } on && /^Everything else enters the loop/ { exit } on && /^[^ -]/ { bad = 1 } END { exit bad }' "$root/$dir/references/fix-loop.md"; then echo "PASS two-routes list unbroken"
+else echo "FAIL two-routes list is split by a column-0 line"; failures=$((failures + 1)); fi
+# task-done carries the test summary the spec asks for.
+if grep '^ *\*\*Moment: `task-done`' "$root/$dir/SKILL.md" | grep -q "test summary"; then echo "PASS task-done passes the test summary"
+else echo "FAIL task-done lacks the test summary"; failures=$((failures + 1)); fi
+
 # One general site per skill: a specific one beside it would fire twice for one ruling.
 n="$(grep -c '^| `ruling-recorded` | `'"$dir/" "$root/MOMENTS.md")"
 if [ "$n" = "1" ]; then echo "PASS one ruling-recorded site in $dir"

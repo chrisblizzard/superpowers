@@ -10,12 +10,9 @@ Before the loop starts, two routes leave it immediately:
   (`Task <N>: minor (deferred): <one-liner>`), and point the final
   whole-branch review at that list so it can triage which must be fixed
   before merge. A roll-up nobody reads is a silent discard. Minor findings
-  never enter the loop.
+  never enter the loop. For each minor you record as deferred:
 
-For each minor you record as deferred:
-
-**Moment: `work-found`.** If the skill `superpowers-moment-work-found` is available, invoke it now, passing: the minor's one-liner as the title, the finding as the description, and the task number. Then continue.
-
+  **Moment: `work-found`.** If the skill `superpowers-moment-work-found` is available, invoke it now, passing: the minor's one-liner as the title, the finding as the description, and the task number. Then continue.
 - A finding labeled plan-mandated — or any finding that conflicts with
   what the plan's text requires — is yours to rule on: weigh the finding
   against the plan text, decide with the spec as the binding authority, and
@@ -55,6 +52,10 @@ each finding ADDRESSED or NOT ADDRESSED and flags new breakage in the fix
 diff only. New Critical/Important breakage in the fix diff joins the open
 findings list. Out-of-scope observations go to the ledger as deferred
 minors — they never extend the loop.
+
+For each out-of-scope observation you record:
+
+**Moment: `work-found`.** If the skill `superpowers-moment-work-found` is available, invoke it now, passing: the observation as a one-line title, the re-reviewer's words as the description, and the task number. Then continue.
 
 **After each round,** append to the ledger:
 `Task <N>: fix round <R>/5 (<X> addressed, <Y> open — <finding one-liners>; commits <a7>..<b7>)`

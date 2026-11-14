@@ -312,7 +312,7 @@ message as your other bookkeeping:
 - `Task <N>: complete (commits <base7>..<head7>, <K> parked)` after a
   tripped breaker
 
-**Moment: `task-done`.** If the skill `superpowers-moment-task-done` is available, invoke it now, passing: the plan's path, the task number, the commit range, and the review result. Then continue.
+**Moment: `task-done`.** If the skill `superpowers-moment-task-done` is available, invoke it now, passing: the plan's path, the task number, the commit range, the implementer's test summary, and the review result. Then continue.
 
 Then mark the todo complete and move on. Never move to the next task while
 the review has open Critical/Important issues that are neither fixed nor

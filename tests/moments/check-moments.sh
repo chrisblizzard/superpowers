@@ -65,8 +65,8 @@ scan_file() {
             }
             if (fence != "") { remember($0); next }
             if ($0 ~ /^#+ /) { h = $0; sub(/^#+ +/, "", h); print "H\t" h }
-            else if ($0 ~ /^\*\*Moment:/) {
-                line = $0; gsub(/\t/, " ", line); win = above(); gsub(/\t/, " ", win)
+            else if ($0 ~ /^[ \t]*\*\*Moment:/) {
+                line = $0; sub(/^[ \t]+/, "", line); gsub(/\t/, " ", line); win = above(); gsub(/\t/, " ", win)
                 print "M\t" h "\t" NR "\t" line "\t" win
             }
             remember($0)
