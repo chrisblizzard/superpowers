@@ -1,5 +1,32 @@
 # Superpowers
 
+## This fork
+
+This is a fork of [obra/superpowers](https://github.com/obra/superpowers) that adds
+**moments**: named points in the skills (a spec approved, a plan written, a task started
+or done, work found, a ruling recorded, a branch finished) where another plugin can
+take over for a step. At each one, the skill invokes a handler skill named
+`superpowers-moment-<moment>` if one is installed, and otherwise carries on exactly as
+upstream. The fork ships no handlers. [MOMENTS.md](MOMENTS.md) lists every moment and
+where it sits.
+
+The fork's commits sit on top of upstream's release tags, and are rebased onto each new
+upstream release. Versions read `<upstream version>+moments.<n>`.
+
+### Switching over
+
+Install this fork in place of upstream, never both:
+
+```bash
+claude plugin disable superpowers@superpowers-marketplace
+claude plugin marketplace add chrisblizzard/superpowers
+claude plugin install superpowers@chrisblizzard-superpowers
+```
+
+Upstream's README follows.
+
+---
+
 Superpowers is a complete software development methodology for your coding agents, built on top of a set of composable skills and some initial instructions that make sure your agent uses them.
 
 ## Table of Contents
