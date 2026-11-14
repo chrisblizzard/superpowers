@@ -2,35 +2,62 @@
 # PostToolUse hook: fires the execution moments from what subagent-driven-development
 # and executing-plans already record. New lines in a plan's ledger
 # (.superpowers/sdd/<plan>/progress.md) fire task-done, work-found and ruling-recorded;
-# a task-start script (task-brief or task-start) fires task-started. The moment
-# sentences go back to the agent as additionalContext. MOMENTS.md lists the formats.
+# a task-start script (scripts/task-brief or scripts/task-start) fires task-started.
+# The moment sentences go back to the agent as additionalContext. MOMENTS.md lists the
+# formats.
 #
 # A hook must never get in the tool's way: every path exits 0 and stderr is discarded.
 exec 2>/dev/null
 
 input="$(cat)"
-cwd="" tool="" cmd=""
+cwd="" tool="" cmd="" agent=""
 if command -v jq >/dev/null; then
-    cwd="$(printf '%s' "$input" | jq -r '.cwd // empty')"
-    tool="$(printf '%s' "$input" | jq -r '.tool_name // empty')"
-    cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty')"
+    # A unit separator, not a tab: read collapses empty fields between whitespace
+    # separators, and agent_id is usually empty.
+    IFS=$'\x1f' read -r cwd tool agent cmd < <(printf '%s' "$input" |
+        jq -r '[.cwd // "", .tool_name // "", .agent_id // "", (.tool_input.command // "" | gsub("[\u001f\n]"; " "))] | join("\u001f")')
 fi
+# A subagent's tool call leaves the moments to the agent running the plan, which wrote
+# the ledger or ran the script.
+[ -z "$agent" ] || exit 0
+# realpath_of PATH BASE: PATH made absolute against BASE.
+realpath_of() { case "$1" in /*) printf '%s' "$1" ;; *) printf '%s/%s' "$2" "$1" ;; esac; }
+
+# task-started: `<...>scripts/task-brief [-C DIR] PLAN ID` or `<...>scripts/task-start PLAN ID`,
+# with task IDs as task-brief accepts them (6, 6b, 2.1).
+id_re='[A-Za-z0-9]+(\.[A-Za-z0-9]+)*'
+start_re="scripts[/\\\\](task-brief|task-start)[\"']?[[:space:]]+(-C[[:space:]]+[\"']?([^[:space:]\"']+)[\"']?[[:space:]]+)?[\"']?([^[:space:]\"']+)[\"']?[[:space:]]+[\"']?($id_re)([\"'[:space:];&|)]|\$)"
+base="" plan="" n=""
+if [ "$tool" = "Bash" ] && [[ "$cmd" =~ $start_re ]]; then
+    base="${BASH_REMATCH[3]:-$cwd}" plan="${BASH_REMATCH[4]}" n="${BASH_REMATCH[5]}"
+fi
+
 [ -n "$cwd" ] || cwd="$PWD"
-root="$(git -C "$cwd" rev-parse --show-toplevel)" || root="$cwd"
+root="$(git -C "${base:-$cwd}" rev-parse --show-toplevel)" || root="${base:-$cwd}"
 sdd="$root/.superpowers/sdd"
 [ -d "$sdd" ] || exit 0
+
+# One run at a time per working tree, so two hooks never read the same new line.
+lock="$sdd/.moments-lock"
+for _ in 1 2 3 4 5 6 7 8 9 10; do mkdir "$lock" && break; sleep 0.1; done
+[ -d "$lock" ] || exit 0
+trap 'rmdir "$lock"' EXIT
 
 moments=()
 moment() { # NAME CARRIES
     moments+=("**Moment: \`$1\`.** If the skill \`superpowers-moment-$1\` is available, invoke it now, passing: $2. Then continue.")
 }
 
-# task-started: a task-start script run as `<...>/task-brief PLAN N` or `<...>/task-start PLAN N`.
-start_re='(^|[/[:space:]])(task-brief|task-start)[[:space:]]+["'\'']?([^[:space:]"'\'']+)["'\'']?[[:space:]]+([0-9]+)'
-if [ "$tool" = "Bash" ] && [[ "$cmd" =~ $start_re ]]; then
-    plan="${BASH_REMATCH[3]}" n="${BASH_REMATCH[4]}"
-    file="$plan"; [ "${file#/}" != "$file" ] || file="$cwd/$plan"
-    title="$(sed -n "s/^### Task $n: *//p" "$file" | head -n 1)"
+if [ -n "$n" ]; then
+    file="$(realpath_of "$plan" "$base")"
+    # Name the plan as its workspace's plan-path does, so task-started and the ledger
+    # moments agree.
+    for marker in "$sdd"/*/plan-path; do
+        [ -f "$marker" ] || continue
+        named="$(head -n 1 "$marker")"
+        [ "$(realpath_of "$named" "$root")" = "$file" ] && { plan="$named"; break; }
+    done
+    title="$(sed -n -E "s/^#+[[:space:]]+Task[[:space:]]+${n//./\\.}:[[:space:]]*//p" "$file" | head -n 1)"
     moment task-started "the plan's path \`$plan\`, task $n, and its title \"${title:-unknown}\""
 fi
 
@@ -38,25 +65,29 @@ fi
 for ledger in "$sdd"/*/progress.md; do
     [ -f "$ledger" ] || continue
     ws="${ledger%/progress.md}"
+    total="$(awk 'END { print NR }' "$ledger")"
+    if [ ! -f "$ws/.moments-cursor" ] && [ -z "$(find "$ledger" -mmin -2)" ]; then
+        # A ledger first seen after two quiet minutes is old work (the fork installed
+        # mid-plan, or a finished plan's workspace): take it as read, replay nothing.
+        printf '%s\n' "$total" > "$ws/.moments-cursor"
+        continue
+    fi
     plan="$(head -n 1 "$ws/plan-path")"
     [ -n "$plan" ] || plan="$(sed -n '1s/^# SDD ledger — plan: //p' "$ledger")"
     plan="${plan:-unknown}"
     seen="$(cat "$ws/.moments-cursor")"
     [[ "$seen" =~ ^[0-9]+$ ]] || seen=0
-    total="$(awk 'END { print NR }' "$ledger")"
     [ "$total" -ge "$seen" ] || seen=0
     lineno=0
     while IFS= read -r line || [ -n "$line" ]; do
         lineno=$((lineno + 1))
         [ "$lineno" -gt "$seen" ] || continue
-        case "$line" in
-            Task\ [0-9]*:*) scope="task $(printf '%s' "$line" | sed 's/^Task \([0-9]*\):.*/\1/')" ;;
-            Final:*) scope="Final" ;;
-            Pre-flight*) scope="Pre-flight" ;;
-            *) scope="unknown" ;;
-        esac
-        if [[ "$line" =~ ^Task\ ([0-9]+):\ complete\ \((.*)\)$ ]]; then
-            moment task-done "the plan's path \`$plan\`, task ${BASH_REMATCH[1]}, and ${BASH_REMATCH[2]}"
+        if [[ "$line" =~ ^Task\ ($id_re): ]]; then scope="task ${BASH_REMATCH[1]}"
+        elif [[ "$line" == Final:* ]]; then scope="Final"
+        elif [[ "$line" == Pre-flight* ]]; then scope="Pre-flight"
+        else scope="unknown"; fi
+        if [[ "$line" =~ ^Task\ ($id_re):\ complete\ \((.*)\)$ ]]; then
+            moment task-done "the plan's path \`$plan\`, task ${BASH_REMATCH[1]}, and ${BASH_REMATCH[3]}"
         fi
         if [[ "$line" == *" parked — "* ]]; then
             finding="${line#* parked — }"; finding="${finding%% — Ruling:*}"
@@ -73,8 +104,9 @@ done
 
 [ "${#moments[@]}" -gt 0 ] || exit 0
 
-# Escape for a JSON string, as hooks/session-start does.
-text="$(printf '%s\n' "${moments[@]}")"
+# Escape for a JSON string, as hooks/session-start does, after dropping the control
+# characters JSON can't carry raw (a coloured test log's escapes, for example).
+text="$(printf '%s\n' "${moments[@]}" | tr -d '\000-\010\013\014\016-\037')"
 text="${text//\\/\\\\}"
 text="${text//\"/\\\"}"
 text="${text//$'\n'/\\n}"

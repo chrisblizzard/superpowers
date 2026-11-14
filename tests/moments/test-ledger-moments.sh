@@ -111,4 +111,45 @@ line=$'Task 1: Ruling: say "hi" \\ back\tslash — done'
 append "$r" "$line"
 run escaping "$(input "$r" Edit)" && expect escaping "ruling-recorded" "$line"
 
+
+# Control characters (a coloured test log copied into the ledger) still give valid JSON.
+append "$r" $'Task 1: Ruling: log says \e[32mok\e[0m and \x01'
+run control-chars "$(input "$r" Edit)" && expect control-chars "ruling-recorded" "log says" "task 1"
+
+# The script as the skills call it: quoted, with -C, through bash.
+run quoted-script "$(input "$r" Bash 'bash "/x/scripts/task-brief" docs/plan.md 1')" \
+    && expect quoted-script "task-started" "task 1" '"Alpha"'
+run dash-C "$(input "$tmp" Bash "bash /x/scripts/task-brief -C $r docs/plan.md 2")" \
+    && expect dash-C "task-started" "task 2" '"Beta"'
+run not-a-script "$(input "$r" Bash 'echo usage: task-brief foo 1')" \
+    && { [ -z "$out" ] && pass not-a-script || fail "not-a-script: output $out"; }
+
+# task-started names the plan as the ledger moments do: the workspace's plan-path.
+run same-plan-name "$(input "$r" Bash "bash /x/scripts/task-start $r/docs/plan.md 1")" \
+    && expect same-plan-name "task-started" '`docs/plan.md`'
+
+# A ledger already there, untouched for a while, is taken as read: no replay of old work.
+o="$tmp/old"; make_repo "$o"
+append "$o" 'Task 1: complete (commits a..b, review clean)'
+touch -d '10 minutes ago' "$o/.superpowers/sdd/plan/progress.md"
+run old-ledger "$(input "$o" Edit)" && { [ -z "$out" ] && pass old-ledger || fail "old-ledger: output $out"; }
+append "$o" 'Task 2: complete (commits c..d, review clean)'
+run old-ledger-new-line "$(input "$o" Edit)" && expect old-ledger-new-line "task-done" "task 2" "c..d"
+
+# Task IDs as task-brief accepts them, and headings at any depth.
+printf '%s\n' '### Task 6b: Six-b' '' '## Task 2.1: Sub' >> "$r/docs/plan.md"
+run id-letters "$(input "$r" Bash 'bash /x/scripts/task-brief docs/plan.md 6b')" \
+    && expect id-letters "task-started" "task 6b" '"Six-b"'
+run id-dotted "$(input "$r" Bash 'bash /x/scripts/task-brief docs/plan.md 2.1')" \
+    && expect id-dotted "task-started" "task 2.1" '"Sub"'
+append "$r" 'Task 6b: complete (commits e..f, review clean)'
+append "$r" 'Task 6b: Ruling: q'
+run id-ledger "$(input "$r" Edit)" && expect id-ledger "task-done ruling-recorded" "task 6b, and commits" ", and task 6b."
+
+# A subagent's tool call leaves the ledger to the agent that wrote it.
+append "$r" 'Task 1: Ruling: for the controller'
+sub="$(input "$r" Edit | jq -c '. + {agent_id: "sub-1"}')"
+run subagent "$sub" && { [ -z "$out" ] && pass subagent || fail "subagent: output $out"; }
+run controller-after "$(input "$r" Edit)" && expect controller-after "ruling-recorded" "for the controller"
+
 [ "$failures" -eq 0 ] || { echo "$failures failed"; exit 1; }
