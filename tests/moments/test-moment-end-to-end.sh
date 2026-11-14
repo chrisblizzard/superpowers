@@ -58,7 +58,8 @@ fi
 echo "== negative case: no handler installed"
 n_dir="$(make_project)"
 if run_turns "$n_dir"; then
-    if [ -n "$(plan_files "$n_dir")" ] && ! grep -qiE 'superpowers-moment|not available|error' "$n_dir/turn2.out"; then
+    # Only a handler or a missing skill counts: the toy spec itself talks about usage errors.
+    if [ -n "$(plan_files "$n_dir")" ] && ! grep -qiE 'superpowers-moment|skill[^.]*(not available|not found|unavailable)' "$n_dir/turn1.out" "$n_dir/turn2.out"; then
         echo "PASS negative: plan written, no error, no handler mentioned"
     else
         echo "FAIL negative: see $n_dir/turn*.out"; failures=$((failures + 1))
