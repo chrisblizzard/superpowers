@@ -19,6 +19,12 @@ else
     fail spec-approved-passes-none
 fi
 
+# The moment waits for the approved design doc to be saved, so its path reaches the handler.
+sa_lineno="$(grep -n -m1 '^\*\*Moment: `spec-approved`' "$brainstorming" | cut -d: -f1)"
+sa_before="$(head -n "$((${sa_lineno:-1} - 1))" "$brainstorming" | grep -v '^[[:space:]]*$' | tail -1)"
+if printf '%s' "$sa_before" | grep -qi 'saved'; then pass spec-approved-after-save
+else fail "spec-approved-after-save: preceding line is: $sa_before"; fi
+
 pw_lineno="$(grep -n -m1 '^\*\*Moment: `plan-written`' "$writing_plans" | cut -d: -f1)"
 if [ -n "$pw_lineno" ]; then pass plan-written-present; else fail plan-written-present; fi
 # The moment comes after the human's review and any edits, not at first save.
