@@ -1,15 +1,14 @@
 {
-  "name": "superpowers-dev",
-  "description": "Development marketplace for Superpowers core skills library",
+  "name": "chrisblizzard-superpowers",
+  "description": "Superpowers with lifecycle moments that other plugins can handle (a fork of obra/superpowers)",
   "owner": {
-    "name": "Jesse Vincent",
-    "email": "jesse@fsck.com"
+    "name": "chrisblizzard"
   },
   "plugins": [
     {
       "name": "superpowers",
       "description": "Core skills library for Claude Code: TDD, debugging, collaboration patterns, and proven techniques",
-      "version": "7.0.2",
+      "version": "7.0.2+moments.1",
       "source": "./",
       "author": {
         "name": "Jesse Vincent",
