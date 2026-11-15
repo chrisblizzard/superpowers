@@ -4,7 +4,7 @@ set -u
 root="$(cd "$(dirname "$0")/../.." && pwd)"
 mp="$root/.claude-plugin/marketplace.json"
 pj="$root/.claude-plugin/plugin.json"
-version="7.0.2+moments.1"
+version="7.0.2+moments.2"
 fork="https://github.com/chrisblizzard/superpowers"
 failures=0
 
