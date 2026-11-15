@@ -78,15 +78,19 @@ for ledger in "$sdd"/*/progress.md; do
     seen="$(cat "$ws/.moments-cursor")"
     [[ "$seen" =~ ^[0-9]+$ ]] || seen=0
     [ "$total" -ge "$seen" ] || seen=0
-    lineno=0
+    lineno=0 tasks_begun=0
     while IFS= read -r line || [ -n "$line" ]; do
         lineno=$((lineno + 1))
+        # Controllers sometimes write ledger lines as a list; the marker isn't part of
+        # the format.
+        body="$line"; [[ "$body" =~ ^[-*][[:space:]]+(.*)$ ]] && body="${BASH_REMATCH[1]}"
+        [[ "$body" =~ ^Task\ $id_re: ]] && tasks_begun=1
         [ "$lineno" -gt "$seen" ] || continue
-        if [[ "$line" =~ ^Task\ ($id_re): ]]; then scope="task ${BASH_REMATCH[1]}"
-        elif [[ "$line" == Final:* ]]; then scope="Final"
-        elif [[ "$line" == Pre-flight* ]]; then scope="Pre-flight"
+        if [[ "$body" =~ ^Task\ ($id_re): ]]; then scope="task ${BASH_REMATCH[1]}"
+        elif [[ "$body" == Final:* ]]; then scope="Final"
+        elif [[ "$body" == Pre-flight* ]] || [ "$tasks_begun" = 0 ]; then scope="Pre-flight"
         else scope="unknown"; fi
-        if [[ "$line" =~ ^Task\ ($id_re):\ complete\ \((.*)\)$ ]]; then
+        if [[ "$body" =~ ^Task\ ($id_re):\ complete\ \((.*)\)$ ]]; then
             moment task-done "the plan's path \`$plan\`, task ${BASH_REMATCH[1]}, and ${BASH_REMATCH[3]}"
         fi
         if [[ "$line" == *" parked — "* ]]; then

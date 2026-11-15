@@ -152,4 +152,15 @@ sub="$(input "$r" Edit | jq -c '. + {agent_id: "sub-1"}')"
 run subagent "$sub" && { [ -z "$out" ] && pass subagent || fail "subagent: output $out"; }
 run controller-after "$(input "$r" Edit)" && expect controller-after "ruling-recorded" "for the controller"
 
+
+# Rulings written as a list before any task's lines are pre-flight rulings; a list
+# marker in front of a ledger line doesn't hide its format.
+q="$tmp/list"; make_repo "$q"
+append "$q" '## Pre-flight'
+append "$q" '- Ruling: 1 names stay — they match — cost: none'
+run list-pre-flight "$(input "$q" Edit)" && expect list-pre-flight "ruling-recorded" "Pre-flight" "1 names stay"
+append "$q" '- Task 1: complete (commits a..b, review clean)'
+append "$q" '- Ruling: later one'
+run list-after-task "$(input "$q" Edit)" && expect list-after-task "task-done ruling-recorded" "task 1, and commits a..b" ", and unknown."
+
 [ "$failures" -eq 0 ] || { echo "$failures failed"; exit 1; }
