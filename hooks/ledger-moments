@@ -98,6 +98,9 @@ for ledger in "$sdd"/*/progress.md; do
             moment work-found "\"$finding\" as the title, the ledger line \"$line\" as the description, and $scope"
         elif [[ "$line" == *"minor (deferred): "* ]]; then
             moment work-found "\"${line#*minor (deferred): }\" as the title, the ledger line \"$line\" as the description, and $scope"
+        elif [[ "$body" =~ ^Task\ $id_re:\ minor:\ (.+)$ ]]; then
+            # Controllers also write a task's minors as "Task <N>: minor: <finding>".
+            moment work-found "\"${BASH_REMATCH[2]}\" as the title, the ledger line \"$line\" as the description, and $scope"
         fi
         if [[ "$line" == *"Ruling:"* ]]; then
             moment ruling-recorded "the ruling \"$line\", and $scope"

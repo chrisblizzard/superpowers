@@ -163,4 +163,12 @@ append "$q" '- Task 1: complete (commits a..b, review clean)'
 append "$q" '- Ruling: later one'
 run list-after-task "$(input "$q" Edit)" && expect list-after-task "task-done ruling-recorded" "task 1, and commits a..b" ", and unknown."
 
+
+# A minor recorded as "Task <N>: minor: <finding>" is found work too; a review's
+# summary line counting its minors is not.
+append "$q" 'Task 2: minor: a comment misstates its reason (x.go:12)'
+run minor-short "$(input "$q" Edit)" && expect minor-short "work-found" '"a comment misstates its reason (x.go:12)"' "task 2"
+append "$q" 'Task 2: review ✅/approved, 4 Minor (task-2-review.md)'
+run minor-summary "$(input "$q" Edit)" && { [ -z "$out" ] && pass minor-summary || fail "minor-summary: output $out"; }
+
 [ "$failures" -eq 0 ] || { echo "$failures failed"; exit 1; }

@@ -32,10 +32,13 @@ once, keeping a cursor beside it, and watches `Bash` for the task-start scripts:
 | a ledger line `Task <N>: complete (<rest>)` | `task-done` | the plan's path, the task number, and `<rest>` |
 | a ledger line with ` parked — <finding>` | `work-found`, then `ruling-recorded` | the finding as a title, the line, the task |
 | a ledger line with `minor (deferred): <one-liner>` | `work-found` | the one-liner as a title, the line, the task or `Final` |
+| a ledger line `Task <N>: minor: <finding>` | `work-found` | the finding as a title, the line, the task |
 | a ledger line with `Ruling:` | `ruling-recorded` | the line, and its task number, `Pre-flight` or `Final` |
 
-The plan's path comes from the workspace's `plan-path` marker, or the ledger's
-`# SDD ledger — plan:` header. Every other ledger line fires nothing. After a rebase,
+A leading list marker (`- `) doesn't change a line's format, and rulings written before
+any task's lines count as `Pre-flight`. The plan's path comes from the workspace's
+`plan-path` marker, or the ledger's `# SDD ledger — plan:` header. Every other ledger
+line fires nothing. After a rebase,
 `tests/moments/test-ledger-contract.sh` checks each format and script name is still in
 upstream's text.
 
